@@ -25,6 +25,7 @@ class AdvancedGame {
         this.initializeWeather();
         this.animate();
         console.log('🎮 Advanced Fantasy Game Initialized!');
+        document.getElementById('loading').style.display = 'none';
     }
 
     initAudio() {
@@ -56,12 +57,11 @@ class AdvancedGame {
     }
 
     setupPhysics() {
+        // Simplified physics without Cannon-ES
         physics = {
-            world: new CANNON.World(),
+            gravity: 9.82,
             bodies: []
         };
-        physics.world.gravity.set(0, -9.82, 0);
-        physics.world.defaultContactMaterial.friction = 0.4;
     }
 
     setupLights() {
@@ -164,7 +164,7 @@ class AdvancedGame {
     }
 
     updateWeather() {
-        const weatherTypes = ['clear', 'rain', 'mist', 'storm'];
+        const weatherTypes = ['clear', 'rain', 'mist'];
         const newWeather = weatherTypes[Math.floor(Math.random() * weatherTypes.length)];
         
         if (newWeather !== this.weather.type) {
@@ -175,7 +175,7 @@ class AdvancedGame {
             this.weather.particles = [];
 
             if (newWeather === 'rain') {
-                for (let i = 0; i < 500; i++) {
+                for (let i = 0; i < 200; i++) {
                     const x = (Math.random() - 0.5) * 300;
                     const y = Math.random() * 200 + 50;
                     const z = (Math.random() - 0.5) * 300;
@@ -269,7 +269,6 @@ class AdvancedGame {
             this.updatePlayer();
             this.updateEnemies();
             this.updateNPCs();
-            physics.world.step(1 / 60);
         }
         
         this.updateUI();
@@ -562,10 +561,6 @@ class AdvancedWorld {
         ground.rotation.x = -Math.PI / 2;
         ground.receiveShadow = true;
         scene.add(ground);
-
-        const groundBody = new CANNON.Body({ mass: 0 });
-        groundBody.addShape(new CANNON.Plane());
-        physics.world.addBody(groundBody);
     }
 
     createForest(scene, physics) {
@@ -825,5 +820,5 @@ function showMessage(text) {
 window.addEventListener('load', () => {
     new AdvancedGame();
     showMessage('⚔️ Welcome to the Dark Forest! ⚔️');
-    setTimeout(() => showMessage('🎯 Left Click to Attack | Q to Cast Spell'), 500);
+    setTimeout(() => showMessage('🎮 Left Click to Attack | Q to Cast Spell'), 500);
 });
